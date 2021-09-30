@@ -1,7 +1,6 @@
 class Progressbar {
-    constructor(selector, data) {
+    constructor(selector) {
         this.selector = selector;
-        this.data = data;
 
         this.DOM = null;
         this.allProgressBarDOM = null;
@@ -11,8 +10,7 @@ class Progressbar {
     }
 
     init() {
-        if (!this.isValidSelector() ||
-            !this.isValidData()) {
+        if (!this.isValidSelector()) {
             console.error('ERROR: nepraejo pirmines patikros');
             return false;
         }
@@ -23,7 +21,7 @@ class Progressbar {
             return false;
         }
 
-        this.render();
+        this.allProgressBarDOM = this.DOM.querySelectorAll('.progress-bar');
         this.addEvents();
     }
 
@@ -33,35 +31,6 @@ class Progressbar {
             return false;
         }
         return true;
-    }
-
-    isValidData() {
-        if (!Array.isArray(this.data) ||
-            this.data.length === 0) {
-            return false;
-        }
-        return true;
-    }
-
-    render() {
-        let HTML = '';
-
-        for (const bar of this.data) {
-            HTML += `<div class="progress-bar">
-                        <div class="top">
-                            <div class="title">${bar.title}</div>
-                            <div class="value">${bar.value}%</div>
-                        </div>
-                        <div class="bottom">
-                            <div class="progress" style="width: ${bar.value}%;">
-                                <div class="value"></div>
-                            </div>
-                        </div>
-                    </div>`;
-        }
-
-        this.DOM.innerHTML += HTML;
-        this.allProgressBarDOM = this.DOM.querySelectorAll('.progress-bar');
     }
 
     addEvents() {
