@@ -5,8 +5,8 @@ const db = {}
 db.init = async ({ database, host, user }) => {
     const connection = await db.createDatabase({ database, host, user });
 
-    await db.createTableUsers(connection);
-    await db.createTableAccounts(connection);
+    await db.createTableSkills(connection);
+    // await db.createTableAccounts(connection);
 
     return connection;
 }
@@ -36,47 +36,54 @@ db.createDatabase = async ({ database, host, user }) => {
     }
 }
 
-db.createTableUsers = async (connection) => {
+db.createTableSkills = async (connection) => {
     try {
-        const sql = 'CREATE TABLE IF NOT EXISTS `users` (\
+        const sql = 'CREATE TABLE IF NOT EXISTS `skills` (\
                         `id` int(10) NOT NULL AUTO_INCREMENT,\
-                        `firstname` char(20) COLLATE utf8_swedish_ci NOT NULL,\
-                        `lastname` char(20) COLLATE utf8_swedish_ci NOT NULL,\
-                        `isActive` tinyint(1) DEFAULT 1 NOT NULL,\
+                        `title` char(20) COLLATE utf8_swedish_ci NOT NULL,\
+                        `value` tinyint(3) DEFAULT 50 NOT NULL,\
                         PRIMARY KEY(`id`)\
                     ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_swedish_ci';
         await connection.execute(sql);
+
+        const skillsQuery = 'INSERT INTO `skills`\
+                                (`title`, `value`)\
+                            VALUES\
+                                ("UX Design", 90),\
+                                ("Web Design", 86),\
+                                ("Web Development", 30)';
+        await connection.execute(skillsQuery);
     } catch (error) {
-        console.log('Nepavyko sukurti autoriu lenteles');
+        console.log('Nepavyko sukurti skills lenteles');
         console.log(error);
         return error;
     }
 }
 
-db.createTableAccounts = async (connection) => {
-    try {
-        const query = 'CREATE TABLE IF NOT EXISTS `accounts` (\
-                            `id` int(10) NOT NULL AUTO_INCREMENT,\
-                            `user_id` int(10) NOT NULL,\
-                            `account_number` char(20) NOT NULL,\
-                            `money` int(10) DEFAULT 0 NOT NULL,\
-                            `isActive` tinyint(1) DEFAULT 1 NOT NULL,\
-                            PRIMARY KEY(`id`)\
-                        ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_swedish_ci';
-        await connection.execute(query);
+// db.createTableAccounts = async (connection) => {
+//     try {
+//         const query = 'CREATE TABLE IF NOT EXISTS `accounts` (\
+//                             `id` int(10) NOT NULL AUTO_INCREMENT,\
+//                             `user_id` int(10) NOT NULL,\
+//                             `account_number` char(20) NOT NULL,\
+//                             `money` int(10) DEFAULT 0 NOT NULL,\
+//                             `isActive` tinyint(1) DEFAULT 1 NOT NULL,\
+//                             PRIMARY KEY(`id`)\
+//                         ) ENGINE = InnoDB DEFAULT CHARSET = utf8 COLLATE = utf8_swedish_ci';
+//         await connection.execute(query);
 
-        const queryFK = 'ALTER TABLE `accounts`\
-                        ADD FOREIGN KEY (`user_id`)\
-                            REFERENCES `users`(`id`)\
-                                ON DELETE RESTRICT\
-                                ON UPDATE RESTRICT;';
-        await connection.execute(queryFK);
-    } catch (error) {
-        console.log('Nepavyko sukurti knygu lenteles');
-        console.log(error);
-        return error;
-    }
-}
+//         const queryFK = 'ALTER TABLE `accounts`\
+//                         ADD FOREIGN KEY (`user_id`)\
+//                             REFERENCES `users`(`id`)\
+//                                 ON DELETE RESTRICT\
+//                                 ON UPDATE RESTRICT;';
+//         await connection.execute(queryFK);
+//     } catch (error) {
+//         console.log('Nepavyko sukurti knygu lenteles');
+//         console.log(error);
+//         return error;
+//     }
+// }
 
 (async function () {
     await db.init({
